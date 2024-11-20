@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('organisations', function (Blueprint $table) {
             $table->id();
+            $table->string("name");
+            $table->timestamps();
+        });
+
+        Schema::create('organisation_user', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId("organisation_id")->constrained();
+            $table->foreignId("user_id")->constrained();
             $table->timestamps();
         });
     }
@@ -23,5 +31,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('organisations');
+        Schema::dropIfExists('organisation_user');
     }
 };
