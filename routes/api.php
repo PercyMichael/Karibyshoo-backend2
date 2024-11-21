@@ -7,15 +7,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-Route::get('/users', function () {
-
-    $users = User::with('organisation')->get();
-
-    return response()->json($users);
+//auth
+Route::post('/register', [UserController::class, 'register']);
+Route::post('/login', [UserController::class, 'login']);
+Route::post('/logout', [UserController::class, 'login']);
+Route::post('/', function () {
+    return 'Hello';
 });
 
 

@@ -11,13 +11,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Panel;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements FilamentUser, HasTenants
+class User extends Authenticatable implements FilamentUser, HasTenants, CanResetPassword
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
@@ -51,7 +52,22 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     function canAccessPanel(Panel $panel): bool
     {
-        return $this->role === 'admin';
+
+        // Check if the user is a super admin and can access the super admin panel
+        if ($panel->getId() === 'super-admin' && $this->role === 'super-admin') {
+
+            // dd($panel->getId());
+            return true;
+        }
+
+        // Check if the user is an admin and can access the admin panel
+        if ($panel->getId() === 'admin' && $this->role === 'admin') {
+
+            // dd($panel->getId());
+            return true;
+        }
+
+        return false;  // Return false if the user doesn't have access to the panel
     }
 
 

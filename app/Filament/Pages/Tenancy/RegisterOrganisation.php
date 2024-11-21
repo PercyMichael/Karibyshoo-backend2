@@ -12,7 +12,7 @@ class RegisterTeam extends RegisterTenant
 {
     public static function getLabel(): string
     {
-        return 'Register team';
+        return 'Register orgainsation';
     }
 
     public function form(Form $form): Form

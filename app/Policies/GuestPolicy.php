@@ -12,8 +12,9 @@ class GuestPolicy
      */
     public function viewAny(User $user): bool
     {
-        // Both admin and staff can view any Guest
-        return true;
+        // Both super admin, and admin can view any Guest
+        // Only admin and super admin can view guests
+        return in_array($user->role, ['super_admin', 'admin']);
     }
 
     /**
@@ -21,8 +22,8 @@ class GuestPolicy
      */
     public function view(User $user, Guest $guest): bool
     {
-        // Both admin and staff can view a specific Guest
-        return true;
+        // Both super admin, and admin can view a specific Guest
+        return in_array($user->role, ['super_admin', 'admin']);
     }
 
     /**
