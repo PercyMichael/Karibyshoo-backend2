@@ -25,7 +25,9 @@ class SuperAdminPanelProvider extends PanelProvider
         return $panel
             ->id('super-admin')
             ->path('super-admin')
+            // ->registration()
             ->login()
+            ->brandName('Karibyshoo')
             ->colors([
                 'primary' => Color::Blue,
             ])

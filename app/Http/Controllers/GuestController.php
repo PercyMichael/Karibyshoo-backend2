@@ -21,7 +21,7 @@ class GuestController extends Controller
         // Get the month and day from the JSON request body
         $month = $request->input('month');
         $day = $request->input('day');
-        $recorded_by = $request->input('recorded_by'); // Get the user ID from the request
+        $recorded_by = $request->input('user_id'); // Get the user ID from the request
         $organisation_id = $request->input('organisation_id'); // Get organisation ID from the request
         $search = $request->input('search'); // Get the search term from the request
 
@@ -31,7 +31,7 @@ class GuestController extends Controller
 
         // Filter by user ID if provided
         if ($recorded_by) {
-            $query->where('recorded_by', $recorded_by);
+            $query->where('user_id', $recorded_by);
         }
 
         // Filter by organisation ID if provided
@@ -53,11 +53,11 @@ class GuestController extends Controller
 
 
         // Execute the query
-        $Guests = $query->get();
+        $guests = $query->get();
 
         // Count check-ins based on 'left' field
-        foreach ($Guests as $Guest) {
-            if (is_null($Guest->left)) {
+        foreach ($guests as $guest) {
+            if (is_null($guest->left)) {
                 $stillIn++;
             } else {
                 $left++;
@@ -65,10 +65,10 @@ class GuestController extends Controller
         }
 
         return response()->json([
-            'count' => $Guests->count(),
+            'count' => $guests->count(),
             'left' => $left,
             'stillIn' => $stillIn,  // Count of check-ins still present
-            'Guests' => $Guests  // The check-in records with organisation info
+            'guests' => $guests  // The check-in records with organisation info
         ], 200);
     }
 
@@ -102,8 +102,8 @@ class GuestController extends Controller
             ]);
 
             // Create Guest
-            $Guest = Guest::create($request->all());
-            return response()->json(['message' => 'Guest created successfully', 'data' => $Guest], 201);
+            $guest = Guest::create($request->all());
+            return response()->json(['message' => 'Guest created successfully', 'data' => $guest], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['message' => 'Validation error', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
@@ -114,7 +114,7 @@ class GuestController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Guest $Guest)
+    public function show(Guest $guest)
     {
         //
     }
@@ -122,7 +122,7 @@ class GuestController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Guest $Guest)
+    public function edit(Guest $guest)
     {
         //
     }
@@ -139,19 +139,19 @@ class GuestController extends Controller
         }
 
         // Find the check-in by ID or return a 404
-        $Guest = Guest::find($id);
-        if (!$Guest) {
-            return response()->json(['message' => 'Check-in not found.'], 404);
+        $guest = Guest::find($id);
+        if (!$guest) {
+            return response()->json(['message' => 'Guest not found.'], 404);
         }
 
         // Update the 'left' field with the current server timestamp
-        $Guest->left = now(); // This will automatically use the current date and time
-        $Guest->save();
+        $guest->left = now(); // This will automatically use the current date and time
+        $guest->save();
 
         // Return a 200 OK response with the updated check-in
         return response()->json([
-            'message' => 'Check-in updated successfully!',
-            'Guest' => $Guest
+            'message' => 'Guest updated successfully!',
+            'guest' => $guest
         ], 200);
     }
 
@@ -160,13 +160,13 @@ class GuestController extends Controller
     {
         $searchTerm = $request->input('search');
         $organisationId = $request->input('organisation_id');
-        $recordedBy = $request->input('recorded_by');
+        $recordedBy = $request->input('user_id');
 
         // Get the latest check-in for each unique phone by first grouping by phone
-        $Guests = Guest::with('organisation') // Ensure organisation relationship is loaded
+        $guests = Guest::with('organisation') // Ensure organisation relationship is loaded
             ->where('name', 'like', "%{$searchTerm}%")
             ->where('organisation_id', $organisationId)
-            ->where('recorded_by', $recordedBy)
+            ->where('user_id', $recordedBy)
             ->orderBy('created_at', 'desc') // Sort by latest entries
             ->get()
             ->unique('phone') // Filter unique check-ins by phone
@@ -174,14 +174,14 @@ class GuestController extends Controller
 
 
         $left = 0;
-        $stillIn = $Guests->whereNull('left')->count();
+        $stillIn = $guests->whereNull('left')->count();
 
         return response()->json([
             'message' => "Searched for '{$searchTerm}'",
-            'count' => $Guests->count(),
+            'count' => $guests->count(),
             'left' => $left,
             'stillIn' => $stillIn,
-            'Guests' => $Guests
+            'guests' => $guests
         ], 200);
     }
 
@@ -193,7 +193,7 @@ class GuestController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Guest $Guest)
+    public function destroy(Guest $guest)
     {
         //
     }

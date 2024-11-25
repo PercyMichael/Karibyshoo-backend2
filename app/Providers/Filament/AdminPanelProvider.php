@@ -35,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->tenant(Organisation::class, ownershipRelationship: 'organisation')
             ->tenantRegistration(RegisterTeam::class)
+            ->brandName('Karibyshoo')
             ->colors([
                 'primary' => Color::Green,
             ])

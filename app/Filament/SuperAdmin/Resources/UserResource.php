@@ -28,8 +28,9 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required(),
-                Forms\Components\TextInput::make('role')
-                    ->numeric(),
+                Forms\Components\Select::make('role')
+                    ->options(["admin" => "Admin", "staff" => "Staff"])
+                    ->required(),
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()

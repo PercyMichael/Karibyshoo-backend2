@@ -25,6 +25,7 @@ class OrganisationResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required(),
+
             ]);
     }
 

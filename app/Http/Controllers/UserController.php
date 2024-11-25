@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PasswordResetMail;
 use Exception;
 use App\Models\User;
 use Carbon\Carbon;
